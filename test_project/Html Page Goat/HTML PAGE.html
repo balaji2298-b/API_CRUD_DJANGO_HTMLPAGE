@@ -1,0 +1,172 @@
+<html>
+	<head>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+		<title>
+			all is well
+		</title>
+	</head>
+<style>
+	h1{
+		text-align: center;
+		color: red;
+	}
+	.container{
+		height:300px;
+		width: 500px;
+		margin:50px auto;
+		background-color:yellow;
+		text-align: center;
+		padding: 10px 20px 10px;
+		gap:10px;
+		font-size:23px;
+		font-color:black;      
+	}
+	.header{
+	  width: 100px;
+	  font-size: 20px;
+	  margin-top: 10px;
+	  margin-right: -100px;
+	  margin-left: 150px;
+	  padding-right: 50px;
+	}
+	button{
+		background-color:blue;
+		color:white;
+		padding:10px 25px;
+		border-radius:50px;
+		box-shadow:4px;
+		border: 1px soild blue;
+		font-size:23px;
+		margin-right: 10px;
+        	margin-top:10px;
+	}
+</style>
+<body>
+    <!--   <form> -->
+	     <div class="container">
+		     	<h1>Form</h1>
+		    
+			     	<div className="header">
+				     	<label>MobileNumber:</label>
+				     	<input type="text"  id="mobilenumber">
+			          </div>
+			     </br>
+			     <div className="header">
+				     	<label>Otp:</label>
+				     	<input type="text"  id="otp">
+			     </div>
+			     
+			     	<button id="insert" >Submit</button>
+		    
+		</div>
+    <!--  </form> -->
+      <h1>Employee Details</h1>
+	<table class="table table-bordered">
+		<thead class="alert-success">
+			<tr>
+				<th>ID</th>
+				<th>MOBILENUMBER</th>
+				<th>OTP</th>
+				<th>EDIT</th>
+				<th>DELETE</th>
+				<th>VIEW</th>
+			</tr>
+		</thead>
+		<tbody id="viewData">
+		</tbody>
+	</table>
+	
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script type="text/javascript">
+	
+	$(document).ready(function(){
+	     $("#insert").click(function(){
+			var mobilenumber=$('#mobilenumber').val();
+			var otp=$('#otp').val();
+			
+			if(mobilenumber !=='' && otp !=='' )
+	               
+			{   
+				var data={mobilenumber:mobilenumber,otp:otp}
+				$.ajax({
+					url:"http://127.0.0.1:8000/myapp/insert/",
+					type:"POST",
+					data:data,                                                                
+					success:function(response){
+					window.location ='HTML PAGE.html';	
+					}
+				});
+	                   alert("Successfully Added");
+			}
+			else{
+				alert("plz fill all details");
+			}
+	     });
+	     
+			$.ajax({
+				url:"http://127.0.0.1:8000/myapp/display/",
+				type:"GET",
+				success:function(response){
+					 refreshTable(response)   
+				}
+			}); //ajax close
+
+          $("table").on('click','#delete', function(){
+
+			var row=$(this).closest('tr');
+			var id=$(row).find('td').eq(0).html();
+			var Confirm=alert("Are you sure delete this data "+id);
+
+				$.ajax({
+					url:"http://127.0.0.1:8000/myapp/page/delete/"+id,
+					type:"DELETE",
+					success:function(response){
+					}
+				});
+				$(row).remove();
+			     alert("Successfully Deleted");
+	     });
+
+	     $("table").on('click','#edit', function(){
+	     	      var row=$(this).closest('tr');
+	     	      var id=$(row).find('td').eq(0).html();
+	     	      var Confirm=alert("are you sure to edit this data "+id);
+	     });
+	     
+	}); //ready close
+
+      function refreshTable(pages){
+	   	var table=document.getElementById('viewData');
+
+	   	var row="";
+
+		for(var i=0; i<pages.length; i++){
+
+			row+= "<tr>";
+			row+= "<td>" + pages[i].id+"</td>";
+			row+= "<td>" + pages[i].mobilenumber+"</td>";
+			row+= "<td>" + pages[i].otp+"</td>";
+			
+
+			row+= "<td><a href=file:///C:/Users/GALAXY/Desktop/editpage.html?mbl="+ pages[i].mobilenumber + "&otp="+ pages[i].otp +" class='btn btn-warning' id='edit'>Edit</a></td>";
+
+			row+= "<td><a class='btn btn-danger' id='delete'>Delete</a></td>";
+
+			row+= "<td><a  href='file:///C:/Users/GALAXY/Desktop/viewpage.html?mbl="+ pages[i].mobilenumber + "&otp="+ pages[i].otp + "'><i style='font-size:24px;' class='fa'>&#xf06e;</i></a></td>";
+
+			row+= "</tr>";
+		}
+         console.log(row);
+	    document.getElementById('viewData').innerHTML = row;
+     }
+    
+
+
+      
+</script>
+</body>
+</html>
